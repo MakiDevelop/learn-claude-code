@@ -3,7 +3,8 @@ export type AgentLayer =
   | "planning"
   | "memory"
   | "concurrency"
-  | "collaboration";
+  | "collaboration"
+  | "harness-practitioner";
 
 export interface ChapterImage {
   src: string;

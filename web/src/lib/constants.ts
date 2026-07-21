@@ -21,6 +21,12 @@ export const VERSION_ORDER = [
   "s18",
   "s19",
   "s20",
+  "h01",
+  "h02",
+  "h03",
+  "h04",
+  "h05",
+  "h06",
 ] as const;
 
 export const LEARNING_PATH = VERSION_ORDER;
@@ -195,6 +201,54 @@ export const VERSION_META: Record<string, {
     layer: "collaboration",
     prevVersion: "s19",
   },
+  h01: {
+    title: "CLAUDE.md",
+    subtitle: "Put Your Work Rules in Writing",
+    coreAddition: "Persistent work manual",
+    keyInsight: "AI doesn't disobey — it guesses when you leave blanks. A written manual removes the guessing.",
+    layer: "harness-practitioner",
+    prevVersion: null,
+  },
+  h02: {
+    title: "Verification",
+    subtitle: "Don't Trust 'Done' — Verify It",
+    coreAddition: "Acceptance checklist",
+    keyInsight: "Fluent text is not the same as correct output. Define 'done' before the task starts.",
+    layer: "harness-practitioner",
+    prevVersion: "h01",
+  },
+  h03: {
+    title: "Memory",
+    subtitle: "New Chat, Same Context",
+    coreAddition: "Handoff journal",
+    keyInsight: "Memory lives in your files, not in AI's head. A three-part handoff note bridges any conversation gap.",
+    layer: "harness-practitioner",
+    prevVersion: "h02",
+  },
+  h04: {
+    title: "Hooks",
+    subtitle: "When Rules Aren't Enough, Install a Gate",
+    coreAddition: "Prompt-level guard",
+    keyInsight: "CLAUDE.md is a guide. A hook is a guard. If 5% failure is unacceptable, enforce it.",
+    layer: "harness-practitioner",
+    prevVersion: "h03",
+  },
+  h05: {
+    title: "Layered Governance",
+    subtitle: "Too Many Rules? Sort Them into Drawers",
+    coreAddition: "Three-tier rule structure",
+    keyInsight: "AI ignores the second half of a 200-line rule file. Split into global / task / personal layers.",
+    layer: "harness-practitioner",
+    prevVersion: "h04",
+  },
+  h06: {
+    title: "Integration",
+    subtitle: "Assemble a System That Actually Works at the Office",
+    coreAddition: "End-to-end harness",
+    keyInsight: "Start with a minimum viable harness — manual, checklist, handoff note — and add pieces only when needed.",
+    layer: "harness-practitioner",
+    prevVersion: "h05",
+  },
 };
 
 export const LAYERS = [
@@ -227,5 +281,11 @@ export const LAYERS = [
     label: "Multi-Agent Platform",
     color: "#EF4444",
     versions: ["s12", "s15", "s16", "s17", "s18", "s19", "s20"],
+  },
+  {
+    id: "harness-practitioner" as const,
+    label: "Harness Practitioner (No-Code)",
+    color: "#EC4899",
+    versions: ["h01", "h02", "h03", "h04", "h05", "h06"],
   },
 ] as const;

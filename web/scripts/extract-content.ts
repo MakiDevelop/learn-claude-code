@@ -27,7 +27,7 @@ interface ChapterSource {
 }
 
 function dirToVersionId(dirName: string): string | null {
-  const match = dirName.match(/^(s\d{2})_/);
+  const match = dirName.match(/^([sh]\d{2})_/);
   return match ? match[1] : null;
 }
 
@@ -35,7 +35,7 @@ function filenameToVersionId(filename: string): string | null {
   const base = path.basename(filename, ".py");
   if (base === "s_full" || base === "__init__") return null;
 
-  const match = base.match(/^(s\d+[a-c]?)_/);
+  const match = base.match(/^([sh]\d+[a-c]?)_/);
   return match ? match[1] : null;
 }
 
