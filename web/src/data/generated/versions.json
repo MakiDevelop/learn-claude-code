@@ -3666,6 +3666,102 @@
           "alt": "system architecture"
         }
       ]
+    },
+    {
+      "id": "h01",
+      "filename": "h01_claude_md/README.md",
+      "title": "CLAUDE.md",
+      "subtitle": "Put Your Work Rules in Writing",
+      "loc": 0,
+      "tools": [],
+      "newTools": [],
+      "coreAddition": "Persistent work manual",
+      "keyInsight": "AI doesn't disobey — it guesses when you leave blanks. A written manual removes the guessing.",
+      "classes": [],
+      "functions": [],
+      "layer": "harness-practitioner",
+      "source": "",
+      "images": []
+    },
+    {
+      "id": "h02",
+      "filename": "h02_verification/README.md",
+      "title": "Verification",
+      "subtitle": "Don't Trust 'Done' — Verify It",
+      "loc": 0,
+      "tools": [],
+      "newTools": [],
+      "coreAddition": "Acceptance checklist",
+      "keyInsight": "Fluent text is not the same as correct output. Define 'done' before the task starts.",
+      "classes": [],
+      "functions": [],
+      "layer": "harness-practitioner",
+      "source": "",
+      "images": []
+    },
+    {
+      "id": "h03",
+      "filename": "h03_memory/README.md",
+      "title": "Memory",
+      "subtitle": "New Chat, Same Context",
+      "loc": 0,
+      "tools": [],
+      "newTools": [],
+      "coreAddition": "Handoff journal",
+      "keyInsight": "Memory lives in your files, not in AI's head. A three-part handoff note bridges any conversation gap.",
+      "classes": [],
+      "functions": [],
+      "layer": "harness-practitioner",
+      "source": "",
+      "images": []
+    },
+    {
+      "id": "h04",
+      "filename": "h04_hooks/README.md",
+      "title": "Hooks",
+      "subtitle": "When Rules Aren't Enough, Install a Gate",
+      "loc": 0,
+      "tools": [],
+      "newTools": [],
+      "coreAddition": "Prompt-level guard",
+      "keyInsight": "CLAUDE.md is a guide. A hook is a guard. If 5% failure is unacceptable, enforce it.",
+      "classes": [],
+      "functions": [],
+      "layer": "harness-practitioner",
+      "source": "",
+      "images": []
+    },
+    {
+      "id": "h05",
+      "filename": "h05_layered_governance/README.md",
+      "title": "Layered Governance",
+      "subtitle": "Too Many Rules? Sort Them into Drawers",
+      "loc": 0,
+      "tools": [],
+      "newTools": [],
+      "coreAddition": "Three-tier rule structure",
+      "keyInsight": "AI ignores the second half of a 200-line rule file. Split into global / task / personal layers.",
+      "classes": [],
+      "functions": [],
+      "layer": "harness-practitioner",
+      "source": "",
+      "images": []
+    },
+    {
+      "id": "h06",
+      "filename": "h06_integration/README.md",
+      "title": "Integration",
+      "subtitle": "Assemble a System That Actually Works at the Office",
+      "loc": 0,
+      "tools": [],
+      "newTools": [],
+      "coreAddition": "End-to-end harness",
+      "keyInsight": "Start with a minimum viable harness — manual, checklist, handoff note — and add pieces only when needed.",
+      "classes": [],
+      "functions": [],
+      "layer": "harness-practitioner",
+      "source": "",
+      "images": []
     }
   ],
   "diffs": [
@@ -4078,6 +4174,54 @@
         "cancel_cron"
       ],
       "locDelta": 873
+    },
+    {
+      "from": "s20",
+      "to": "h01",
+      "newClasses": [],
+      "newFunctions": [],
+      "newTools": [],
+      "locDelta": -1708
+    },
+    {
+      "from": "h01",
+      "to": "h02",
+      "newClasses": [],
+      "newFunctions": [],
+      "newTools": [],
+      "locDelta": 0
+    },
+    {
+      "from": "h02",
+      "to": "h03",
+      "newClasses": [],
+      "newFunctions": [],
+      "newTools": [],
+      "locDelta": 0
+    },
+    {
+      "from": "h03",
+      "to": "h04",
+      "newClasses": [],
+      "newFunctions": [],
+      "newTools": [],
+      "locDelta": 0
+    },
+    {
+      "from": "h04",
+      "to": "h05",
+      "newClasses": [],
+      "newFunctions": [],
+      "newTools": [],
+      "locDelta": 0
+    },
+    {
+      "from": "h05",
+      "to": "h06",
+      "newClasses": [],
+      "newFunctions": [],
+      "newTools": [],
+      "locDelta": 0
     }
   ]
 }

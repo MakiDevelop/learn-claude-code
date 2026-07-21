@@ -1,5 +1,113 @@
 [
   {
+    "version": "h01",
+    "locale": "en",
+    "title": "h01: Harness Engineering Practitioner Course (Translation pending)",
+    "content": "# h01: Harness Engineering Practitioner Course (Translation pending)\n\nSee [Traditional Chinese version](README.zh-tw.md) for now.\n"
+  },
+  {
+    "version": "h01",
+    "locale": "zh",
+    "title": "h01: Harness Engineering 入门（简中版待翻译）",
+    "content": "# h01: Harness Engineering 入门（简中版待翻译）\n\n请参考 [繁中版](README.zh-tw.md)。\n"
+  },
+  {
+    "version": "h01",
+    "locale": "ja",
+    "title": "h01: Harness Engineering 実践コース（翻訳準備中）",
+    "content": "# h01: Harness Engineering 実践コース（翻訳準備中）\n\n[繁体中国語版](README.zh-tw.md)をご覧ください。\n"
+  },
+  {
+    "version": "h02",
+    "locale": "en",
+    "title": "h02: Harness Engineering Practitioner Course (Translation pending)",
+    "content": "# h02: Harness Engineering Practitioner Course (Translation pending)\n\nSee [Traditional Chinese version](README.zh-tw.md) for now.\n"
+  },
+  {
+    "version": "h02",
+    "locale": "zh",
+    "title": "h02: Harness Engineering 入门（简中版待翻译）",
+    "content": "# h02: Harness Engineering 入门（简中版待翻译）\n\n请参考 [繁中版](README.zh-tw.md)。\n"
+  },
+  {
+    "version": "h02",
+    "locale": "ja",
+    "title": "h02: Harness Engineering 実践コース（翻訳準備中）",
+    "content": "# h02: Harness Engineering 実践コース（翻訳準備中）\n\n[繁体中国語版](README.zh-tw.md)をご覧ください。\n"
+  },
+  {
+    "version": "h03",
+    "locale": "en",
+    "title": "h03: Harness Engineering Practitioner Course (Translation pending)",
+    "content": "# h03: Harness Engineering Practitioner Course (Translation pending)\n\nSee [Traditional Chinese version](README.zh-tw.md) for now.\n"
+  },
+  {
+    "version": "h03",
+    "locale": "zh",
+    "title": "h03: Harness Engineering 入门（简中版待翻译）",
+    "content": "# h03: Harness Engineering 入门（简中版待翻译）\n\n请参考 [繁中版](README.zh-tw.md)。\n"
+  },
+  {
+    "version": "h03",
+    "locale": "ja",
+    "title": "h03: Harness Engineering 実践コース（翻訳準備中）",
+    "content": "# h03: Harness Engineering 実践コース（翻訳準備中）\n\n[繁体中国語版](README.zh-tw.md)をご覧ください。\n"
+  },
+  {
+    "version": "h04",
+    "locale": "en",
+    "title": "h04: Harness Engineering Practitioner Course (Translation pending)",
+    "content": "# h04: Harness Engineering Practitioner Course (Translation pending)\n\nSee [Traditional Chinese version](README.zh-tw.md) for now.\n"
+  },
+  {
+    "version": "h04",
+    "locale": "zh",
+    "title": "h04: Harness Engineering 入门（简中版待翻译）",
+    "content": "# h04: Harness Engineering 入门（简中版待翻译）\n\n请参考 [繁中版](README.zh-tw.md)。\n"
+  },
+  {
+    "version": "h04",
+    "locale": "ja",
+    "title": "h04: Harness Engineering 実践コース（翻訳準備中）",
+    "content": "# h04: Harness Engineering 実践コース（翻訳準備中）\n\n[繁体中国語版](README.zh-tw.md)をご覧ください。\n"
+  },
+  {
+    "version": "h05",
+    "locale": "en",
+    "title": "h05: Harness Engineering Practitioner Course (Translation pending)",
+    "content": "# h05: Harness Engineering Practitioner Course (Translation pending)\n\nSee [Traditional Chinese version](README.zh-tw.md) for now.\n"
+  },
+  {
+    "version": "h05",
+    "locale": "zh",
+    "title": "h05: Harness Engineering 入门（简中版待翻译）",
+    "content": "# h05: Harness Engineering 入门（简中版待翻译）\n\n请参考 [繁中版](README.zh-tw.md)。\n"
+  },
+  {
+    "version": "h05",
+    "locale": "ja",
+    "title": "h05: Harness Engineering 実践コース（翻訳準備中）",
+    "content": "# h05: Harness Engineering 実践コース（翻訳準備中）\n\n[繁体中国語版](README.zh-tw.md)をご覧ください。\n"
+  },
+  {
+    "version": "h06",
+    "locale": "en",
+    "title": "h06: Harness Engineering Practitioner Course (Translation pending)",
+    "content": "# h06: Harness Engineering Practitioner Course (Translation pending)\n\nSee [Traditional Chinese version](README.zh-tw.md) for now.\n"
+  },
+  {
+    "version": "h06",
+    "locale": "zh",
+    "title": "h06: Harness Engineering 入门（简中版待翻译）",
+    "content": "# h06: Harness Engineering 入门（简中版待翻译）\n\n请参考 [繁中版](README.zh-tw.md)。\n"
+  },
+  {
+    "version": "h06",
+    "locale": "ja",
+    "title": "h06: Harness Engineering 実践コース（翻訳準備中）",
+    "content": "# h06: Harness Engineering 実践コース（翻訳準備中）\n\n[繁体中国語版](README.zh-tw.md)をご覧ください。\n"
+  },
+  {
     "version": "s01",
     "locale": "en",
     "title": "s01: The Agent Loop — One Loop Is All You Need",

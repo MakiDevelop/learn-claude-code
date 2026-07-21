@@ -44,14 +44,20 @@ function listRootChapters(): ChapterSource[] {
     .readdirSync(REPO_ROOT, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
-    .filter((name) => /^s\d{2}_/.test(name))
+    .filter((name) => /^[sh]\d{2}_/.test(name))
     .sort()
     .map((dirName) => {
       const id = dirToVersionId(dirName);
       if (!id) return null;
       const dirPath = path.join(REPO_ROOT, dirName);
       const codePath = path.join(dirPath, "code.py");
-      if (!fs.existsSync(codePath)) return null;
+      if (!fs.existsSync(codePath)) {
+        // h-prefix chapters (practitioner track) have no code.py
+        if (/^h\d{2}_/.test(dirName)) {
+          return { id, dirName, dirPath, codePath: "" };
+        }
+        return null;
+      }
       return { id, dirName, dirPath, codePath };
     })
     .filter((chapter): chapter is ChapterSource => chapter !== null);
@@ -208,22 +214,23 @@ function rewriteChapterMarkdown(
 
 function buildRootVersions(chapters: ChapterSource[]): AgentVersion[] {
   return chapters.map((chapter) => {
-    const source = fs.readFileSync(chapter.codePath, "utf-8");
+    const hasCode = chapter.codePath && fs.existsSync(chapter.codePath);
+    const source = hasCode ? fs.readFileSync(chapter.codePath, "utf-8") : "";
     const lines = source.split("\n");
     const meta = VERSION_META[chapter.id];
 
     return {
       id: chapter.id,
-      filename: `${chapter.dirName}/code.py`,
+      filename: hasCode ? `${chapter.dirName}/code.py` : `${chapter.dirName}/README.md`,
       title: meta?.title ?? chapter.id,
       subtitle: meta?.subtitle ?? "",
-      loc: countLoc(lines),
-      tools: extractTools(source),
+      loc: hasCode ? countLoc(lines) : 0,
+      tools: hasCode ? extractTools(source) : [],
       newTools: [] as string[],
       coreAddition: meta?.coreAddition ?? "",
       keyInsight: meta?.keyInsight ?? "",
-      classes: extractClasses(lines),
-      functions: extractFunctions(lines),
+      classes: hasCode ? extractClasses(lines) : [],
+      functions: hasCode ? extractFunctions(lines) : [],
       layer: meta?.layer ?? "tools",
       source,
       images: copyChapterAssets(chapter),
