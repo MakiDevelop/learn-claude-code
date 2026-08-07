@@ -203,6 +203,11 @@ cython_debug/
 # Accidental root npm lockfile; web/package-lock.json is tracked.
 /package-lock.json
 
+# Local agent instructions and accidental pnpm state. This fork uses npm and
+# tracks web/package-lock.json as the reproducible dependency lock.
+/GEMINI.md
+/web/pnpm-lock.yaml
+
 # Ruff stuff:
 .ruff_cache/
 
