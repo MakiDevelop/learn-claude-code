@@ -46,10 +46,12 @@ def snip_compact(messages, max_messages=50):
     if len(messages) <= max_messages:
         return messages
     head_end, tail_start = 3, len(messages) - (max_messages - 3)
-    if _message_has_tool_use(messages[head_end - 1]):
+    if head_end > 0 and _message_has_tool_use(messages[head_end - 1]):
         while head_end < len(messages) and _is_tool_result_message(messages[head_end]):
             head_end += 1
-    if _is_tool_result_message(messages[tail_start]) and _message_has_tool_use(messages[tail_start - 1]):
+    if (tail_start > 0 and tail_start < len(messages)
+            and _is_tool_result_message(messages[tail_start])
+            and _message_has_tool_use(messages[tail_start - 1])):
         tail_start -= 1
     snipped = tail_start - head_end
     placeholder = {"role": "user", "content": f"[snipped {snipped} messages from conversation middle]"}
@@ -134,15 +136,17 @@ def compact_history(messages):
 
 有时候 API 还是返回 `prompt_too_long`（413），上下文增长速度快于压缩触发速度时。
 
-这时触发 **reactive_compact**：比 compact_history 更激进，从尾部回退，但仍要避免留下孤立 `tool_result`。
+这时触发 **reactive_compact**：触发方式比 compact_history 更激进（API 报错后的应急手段），但压缩策略更温和，保留最近约 5 条原始消息，只总结较早历史。同样避免留下孤立 `tool_result`。
 
 ```python
 def reactive_compact(messages):
     transcript = write_transcript(messages)
-    summary = summarize_history(messages)
     tail_start = max(0, len(messages) - 5)
-    if _is_tool_result_message(messages[tail_start]) and _message_has_tool_use(messages[tail_start - 1]):
+    if (tail_start > 0 and tail_start < len(messages)
+            and _is_tool_result_message(messages[tail_start])
+            and _message_has_tool_use(messages[tail_start - 1])):
         tail_start -= 1
+    summary = summarize_history(messages[:tail_start])
     return [{"role": "user",
              "content": f"[Reactive compact]\n\n{summary}"}, *messages[tail_start:]]
 ```

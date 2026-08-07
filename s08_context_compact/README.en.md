@@ -46,10 +46,12 @@ def snip_compact(messages, max_messages=50):
     if len(messages) <= max_messages:
         return messages
     head_end, tail_start = 3, len(messages) - (max_messages - 3)
-    if _message_has_tool_use(messages[head_end - 1]):
+    if head_end > 0 and _message_has_tool_use(messages[head_end - 1]):
         while head_end < len(messages) and _is_tool_result_message(messages[head_end]):
             head_end += 1
-    if _is_tool_result_message(messages[tail_start]) and _message_has_tool_use(messages[tail_start - 1]):
+    if (tail_start > 0 and tail_start < len(messages)
+            and _is_tool_result_message(messages[tail_start])
+            and _message_has_tool_use(messages[tail_start - 1])):
         tail_start -= 1
     snipped = tail_start - head_end
     placeholder = {"role": "user", "content": f"[snipped {snipped} messages from conversation middle]"}
@@ -134,15 +136,17 @@ def compact_history(messages):
 
 Sometimes the API still returns `prompt_too_long` (413) — when context grows faster than compression triggers.
 
-This triggers **reactive_compact**: more aggressive than compact_history, it retreats from the tail, but still avoids leaving an orphaned `tool_result`.
+This triggers **reactive_compact**: more aggressive than compact_history in trigger (emergency response to a 413 error), but more conservative in what it removes, keeping ~5 recent messages and only summarizing earlier history. Still avoids an orphaned `tool_result`.
 
 ```python
 def reactive_compact(messages):
     transcript = write_transcript(messages)
-    summary = summarize_history(messages)
     tail_start = max(0, len(messages) - 5)
-    if _is_tool_result_message(messages[tail_start]) and _message_has_tool_use(messages[tail_start - 1]):
+    if (tail_start > 0 and tail_start < len(messages)
+            and _is_tool_result_message(messages[tail_start])
+            and _message_has_tool_use(messages[tail_start - 1])):
         tail_start -= 1
+    summary = summarize_history(messages[:tail_start])
     return [{"role": "user",
              "content": f"[Reactive compact]\n\n{summary}"}, *messages[tail_start:]]
 ```

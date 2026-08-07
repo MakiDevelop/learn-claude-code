@@ -42,13 +42,13 @@ s16 的隊友能通訊、能握手關機。但每個隊友等 Lead 分配任務�
 IDLE_POLL_INTERVAL = 5   # seconds
 IDLE_TIMEOUT = 60         # seconds
 
-def idle_poll(agent_name, messages, name, role) -> str:
+def idle_poll(name, messages, role) -> str:
     """Return 'work', 'shutdown', or 'timeout'."""
     for _ in range(IDLE_TIMEOUT // IDLE_POLL_INTERVAL):
         time.sleep(IDLE_POLL_INTERVAL)
 
         # ① 檢查收件箱（優先）
-        inbox = BUS.read_inbox(agent_name)
+        inbox = BUS.read_inbox(name)
         if inbox:
             # shutdown_request 立即處理
             for msg in inbox:
@@ -63,7 +63,7 @@ def idle_poll(agent_name, messages, name, role) -> str:
         unclaimed = scan_unclaimed_tasks()
         if unclaimed:
             task = unclaimed[0]
-            result = claim_task(task["id"], agent_name)
+            result = claim_task(task["id"], name)
             if "Claimed" in result:
                 messages.append(...)
                 return "work"
@@ -126,7 +126,7 @@ while True:
             break  # WORK 階段結束
 
     # IDLE phase
-    idle_result = idle_poll(name, messages, name, role)
+    idle_result = idle_poll(name, messages, role)
     if idle_result == "shutdown":
         break
     if idle_result == "timeout":
@@ -195,15 +195,15 @@ if len(messages) <= 3:
 | 元件 | 之前 (s16) | 之後 (s17) |
 |------|-----------|-----------|
 | 任務分配 | Lead 手動 assign | 隊友自動認領（can_start 檢查依賴） |
-| 隊友狀態 | WORK 或退出 | WORK → IDLE（輪詢 60s） → SHUTDOWN |
+| 隊友狀態 | WORK → IDLE（每 1 秒輪詢 inbox）→ WORK／SHUTDOWN | WORK → IDLE（每 5 秒輪詢 inbox + 任務板，60 秒逾時）→ WORK／SHUTDOWN |
 | claim_task | 無 owner 檢查 | 拒絕已有 owner 的任務 |
-| IDLE 階段關機 | 不處理 shutdown_request | 直接 dispatch shutdown 並退出 |
-| Lead inbox | 只打印，不進上下文 | consume_lead_inbox 統一注入 history |
-| 新函式 | — | idle_poll, scan_unclaimed_tasks, consume_lead_inbox |
+| IDLE 階段關機 | 收到 shutdown_request 後退出 | 直接 dispatch shutdown 並退出 |
+| Lead inbox | consume_lead_inbox 路由協議回應並注入上下文 | 沿用 consume_lead_inbox 機制 |
+| 新函式 | 已有 consume_lead_inbox | idle_poll、scan_unclaimed_tasks（沿用 consume_lead_inbox） |
 | 身份保持 | 僅 system prompt | 壓縮後自動重注入 |
-| Lead 工具 | 14 (s16) | 14（不變） |
+| Lead 工具 | 14 | 14（不變） |
 | 隊友工具 | 5 | 8（+ list_tasks, claim_task, complete_task） |
-| 隊友退出條件 | 完成任務即退出 | 60s 無新任務才退出 |
+| 隊友退出條件 | WORK 完成後進入 IDLE，等待 shutdown_request 後退出（無逾時） | 60 秒無新任務或收到 shutdown_request 後退出 |
 
 ---
 
@@ -268,4 +268,4 @@ s18 Worktree Isolation → 每個任務有自己的工作目錄，互不干擾�
 
 </details>
 
-<!-- translation-sync: zh@v1, en@v1, ja@v1 -->
+<!-- translation-sync: zh@v2, en@v2, ja@v2 -->

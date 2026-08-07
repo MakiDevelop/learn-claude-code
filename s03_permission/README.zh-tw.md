@@ -28,7 +28,7 @@ s02 的迴圈完全保留。唯一的變動在工具執行前插入 `check_permi
 | 閘門 | 作用 | 命中後 |
 |------|------|--------|
 | 1. 拒絕列表 | 永遠禁止的操作（`rm -rf /`、`sudo`） | 直接拒絕，不執行 |
-| 2. 規則匹配 | 取決於上下文的操作（寫工作區外、`rm` 檔案） | 交給閘門 3 |
+| 2. 規則匹配 | 取決於上下文的操作（讀／寫工作區外、`rm` 檔案） | 交給閘門 3 |
 | 3. 使用者審批 | 閘門 2 命中後，暫停等使用者確認 | 使用者決定允許或拒絕 |
 
 三道都沒命中 → 直接執行。大部分日常操作走這條路。
@@ -59,9 +59,9 @@ def check_deny_list(command: str) -> str | None:
 ```python
 PERMISSION_RULES = [
     {
-        "tools": ["write_file", "edit_file"],
+        "tools": ["read_file", "write_file", "edit_file"],
         "check": lambda args: not (WORKDIR / args.get("path", "")).resolve().is_relative_to(WORKDIR),
-        "message": "Writing outside workspace",
+        "message": "Access outside workspace",
     },
     {
         "tools": ["bash"],
@@ -139,7 +139,7 @@ python s03_permission/code.py
 試試這些 prompt：
 
 1. `Create a file called test.txt in the current directory`（應該直接透過）
-2. `Delete all temporary files in /tmp`（bash + rm 會觸發閘門 2）
+2. `Delete the file test.txt`（bash + rm 會觸發閘門 2）
 3. `What files are in the current directory?`（只讀，全部透過）
 4. `Try to write a file to /etc/something`（寫工作區外，觸發閘門 2）
 

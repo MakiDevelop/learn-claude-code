@@ -28,7 +28,7 @@ s02 的循环完全保留。唯一的变动在工具执行前插入 `check_permi
 | 闸门 | 作用 | 命中后 |
 |------|------|--------|
 | 1. 拒绝列表 | 永远禁止的操作（`rm -rf /`、`sudo`） | 直接拒绝，不执行 |
-| 2. 规则匹配 | 取决于上下文的操作（写工作区外、`rm` 文件） | 交给闸门 3 |
+| 2. 规则匹配 | 取决于上下文的操作（读/写工作区外、`rm` 文件） | 交给闸门 3 |
 | 3. 用户审批 | 闸门 2 命中后，暂停等用户确认 | 用户决定允许或拒绝 |
 
 三道都没命中 → 直接执行。大部分日常操作走这条路。
@@ -59,9 +59,9 @@ def check_deny_list(command: str) -> str | None:
 ```python
 PERMISSION_RULES = [
     {
-        "tools": ["write_file", "edit_file"],
+        "tools": ["read_file", "write_file", "edit_file"],
         "check": lambda args: not (WORKDIR / args.get("path", "")).resolve().is_relative_to(WORKDIR),
-        "message": "Writing outside workspace",
+        "message": "Access outside workspace",
     },
     {
         "tools": ["bash"],
@@ -139,7 +139,7 @@ python s03_permission/code.py
 试试这些 prompt：
 
 1. `Create a file called test.txt in the current directory`（应该直接通过）
-2. `Delete all temporary files in /tmp`（bash + rm 会触发闸门 2）
+2. `Delete the file test.txt`（bash + rm 会触发闸门 2）
 3. `What files are in the current directory?`（只读，全部通过）
 4. `Try to write a file to /etc/something`（写工作区外，触发闸门 2）
 

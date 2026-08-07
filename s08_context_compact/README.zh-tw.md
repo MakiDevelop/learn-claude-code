@@ -45,11 +45,18 @@ Agent 跑了 80 輪對話，`messages` 攢了 160 條。最前面的"幫我建�
 def snip_compact(messages, max_messages=50):
     if len(messages) <= max_messages:
         return messages
-    keep_head, keep_tail = 3, max_messages - 3
-    snipped = len(messages) - keep_head - keep_tail
+    head_end, tail_start = 3, len(messages) - (max_messages - 3)
+    if head_end > 0 and _message_has_tool_use(messages[head_end - 1]):
+        while head_end < len(messages) and _is_tool_result_message(messages[head_end]):
+            head_end += 1
+    if (tail_start > 0 and tail_start < len(messages)
+            and _is_tool_result_message(messages[tail_start])
+            and _message_has_tool_use(messages[tail_start - 1])):
+        tail_start -= 1
+    snipped = tail_start - head_end
     placeholder = {"role": "user",
                    "content": f"[snipped {snipped} messages from conversation middle]"}
-    return messages[:keep_head] + [placeholder] + messages[-keep_tail:]
+    return messages[:head_end] + [placeholder] + messages[tail_start:]
 ```
 
 裁掉了整條訊息，但剩下的訊息裡 `tool_result` 內容仍在累積——第 34 條訊息裡可能躺著 30KB 的舊檔案內容。→ L2。
@@ -130,15 +137,19 @@ def compact_history(messages):
 
 有時候 API 還是返回 `prompt_too_long`（413），上下文增長速度快於壓縮觸發速度時。
 
-這時觸發 **reactive_compact**：比 compact_history 更激進，從尾部回退，以位元組級精度裁剪到 API 可接受的大小，只保留最後 5 條訊息 + 摘要。
+這時觸發 **reactive_compact**：觸發方式比 compact_history 更激進（API 報錯後的應急手段），但壓縮策略更溫和，保留最近約 5 條原始訊息，只摘要較早的歷史。同樣避免留下孤立的 `tool_result`。
 
 ```python
 def reactive_compact(messages):
     transcript = write_transcript(messages)
-    summary = summarize_history(messages)
-    tail = messages[-5:]
+    tail_start = max(0, len(messages) - 5)
+    if (tail_start > 0 and tail_start < len(messages)
+            and _is_tool_result_message(messages[tail_start])
+            and _message_has_tool_use(messages[tail_start - 1])):
+        tail_start -= 1
+    summary = summarize_history(messages[:tail_start])
     return [{"role": "user",
-             "content": f"[Reactive compact]\n\n{summary}"}, *tail]
+             "content": f"[Reactive compact]\n\n{summary}"}, *messages[tail_start:]]
 ```
 
 reactive compact 有重試上限（預設 1 次）。再失敗就丟擲異常，不無限迴圈。完整的錯誤恢復邏輯留給 s11。

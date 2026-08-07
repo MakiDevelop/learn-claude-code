@@ -376,16 +376,6 @@ def assemble_system_prompt(context: dict) -> str:
 
 # ── Basic Tools ──
 
-def safe_path(p: str, cwd: Path = None) -> Path:
-    # File tools stay inside the workspace or teammate worktree. Bash remains
-    # powerful on purpose and is controlled by the permission hook instead.
-    base = cwd or WORKDIR
-    path = (base / p).resolve()
-    if not path.is_relative_to(base):
-        raise ValueError(f"Path escapes workspace: {p}")
-    return path
-
-
 def run_bash(command: str, cwd: Path = None,
              run_in_background: bool = False) -> str:
     # run_in_background is consumed by the dispatcher; direct execution ignores it.
@@ -401,7 +391,9 @@ def run_bash(command: str, cwd: Path = None,
 def run_read(path: str, limit: int | None = None,
              offset: int = 0, cwd: Path = None) -> str:
     try:
-        lines = safe_path(path, cwd).read_text().splitlines()
+        base = cwd or WORKDIR
+        file_path = (base / path).resolve()
+        lines = file_path.read_text().splitlines()
         offset = max(int(offset or 0), 0)
         limit = int(limit) if limit is not None else None
         lines = lines[offset:]
@@ -414,7 +406,8 @@ def run_read(path: str, limit: int | None = None,
 
 def run_write(path: str, content: str, cwd: Path = None) -> str:
     try:
-        fp = safe_path(path, cwd)
+        base = cwd or WORKDIR
+        fp = (base / path).resolve()
         fp.parent.mkdir(parents=True, exist_ok=True)
         fp.write_text(content)
         return f"Wrote {len(content)} bytes to {path}"
@@ -425,7 +418,8 @@ def run_write(path: str, content: str, cwd: Path = None) -> str:
 def run_edit(path: str, old_text: str, new_text: str,
              cwd: Path = None) -> str:
     try:
-        fp = safe_path(path, cwd)
+        base = cwd or WORKDIR
+        fp = (base / path).resolve()
         text = fp.read_text()
         if old_text not in text:
             return f"Error: text not found in {path}"
@@ -909,12 +903,14 @@ def permission_hook(block):
             choice = input("  Allow? [y/N] ").strip().lower()
             if choice not in ("y", "yes"):
                 return "Permission denied by user"
-    if block.name in ("write_file", "edit_file"):
+    if block.name in ("read_file", "write_file", "edit_file"):
         path = block.input.get("path", "")
-        try:
-            safe_path(path)
-        except Exception:
-            return f"Permission denied: path escapes workspace: {path}"
+        if not (WORKDIR / path).resolve().is_relative_to(WORKDIR):
+            print(f"\n\033[33m[permission] Access outside workspace\033[0m")
+            print(f"  {block.name}: {path}")
+            choice = input("  Allow? [y/N] ").strip().lower()
+            if choice not in ("y", "yes"):
+                return "Permission denied by user"
     if block.name.startswith("mcp__") and "deploy" in block.name:
         print(f"\n\033[33m[permission] MCP destructive-looking tool: {block.name}\033[0m")
         choice = input("  Allow? [y/N] ").strip().lower()
@@ -1190,15 +1186,15 @@ def compact_history(messages: list) -> list:
 def reactive_compact(messages: list) -> list:
     transcript = write_transcript(messages)
     print(f"  \033[31m[reactive compact] transcript saved: {transcript}\033[0m")
-    try:
-        summary = summarize_history(messages)
-    except Exception:
-        summary = "Earlier conversation was trimmed after a prompt-too-long error."
     tail_start = max(0, len(messages) - 5)
     if (tail_start > 0 and tail_start < len(messages)
             and is_tool_result_message(messages[tail_start])
             and message_has_tool_use(messages[tail_start - 1])):
         tail_start -= 1
+    try:
+        summary = summarize_history(messages[:tail_start])
+    except Exception:
+        summary = "Earlier conversation was trimmed after a prompt-too-long error."
     return [{"role": "user", "content": f"[Reactive compact]\n\n{summary}"},
             *messages[tail_start:]]
 
@@ -2063,8 +2059,8 @@ def print_turn_assistants(messages: list, turn_start: int):
         if msg.get("role") != "assistant":
             continue
         for block in msg.get("content", []):
-            if getattr(block, "type", None) == "text":
-                terminal_print(block.text)
+            if block_type(block) == "text":
+                terminal_print(block["text"] if isinstance(block, dict) else block.text)
 
 
 def cron_autorun_loop(history: list, context: dict):

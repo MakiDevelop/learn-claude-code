@@ -410,13 +410,13 @@ learn-claude-code/
 
 支援 Skill & LSP, 適配 Windows, 可接 GLM / MiniMax / DeepSeek 等開放模型。裝完即用。
 
-GitHub: **[shareAI-lab/Kode-cli](https://github.com/shareAI-lab/Kode-cli)**
+GitHub: **[shareAI-lab/Kode-CLI](https://github.com/shareAI-lab/Kode-CLI)**
 
 ### Kode Agent SDK -- 把 Agent 能力嵌入你的應用
 
 官方 Claude Code Agent SDK 底層與完整 CLI 程序通訊 -- 每個併發使用者 = 一個終端程序。Kode SDK 是獨立庫, 無 per-user 程序開銷, 可嵌入後端、瀏覽器外掛、嵌入式裝置等任意執行時。
 
-GitHub: **[shareAI-lab/Kode-agent-sdk](https://github.com/shareAI-lab/Kode-agent-sdk)**
+GitHub: **[shareAI-lab/kode-agent-sdk](https://github.com/shareAI-lab/kode-agent-sdk)**
 
 ---
 

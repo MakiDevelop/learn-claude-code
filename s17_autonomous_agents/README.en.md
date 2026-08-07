@@ -42,13 +42,13 @@ After completing a task, the teammate doesn't exit. It enters the IDLE phase —
 IDLE_POLL_INTERVAL = 5   # seconds
 IDLE_TIMEOUT = 60         # seconds
 
-def idle_poll(agent_name, messages, name, role) -> str:
+def idle_poll(name, messages, role) -> str:
     """Return 'work', 'shutdown', or 'timeout'."""
     for _ in range(IDLE_TIMEOUT // IDLE_POLL_INTERVAL):
         time.sleep(IDLE_POLL_INTERVAL)
 
         # ① Check inbox (priority)
-        inbox = BUS.read_inbox(agent_name)
+        inbox = BUS.read_inbox(name)
         if inbox:
             # shutdown_request handled immediately
             for msg in inbox:
@@ -63,7 +63,7 @@ def idle_poll(agent_name, messages, name, role) -> str:
         unclaimed = scan_unclaimed_tasks()
         if unclaimed:
             task = unclaimed[0]
-            result = claim_task(task["id"], agent_name)
+            result = claim_task(task["id"], name)
             if "Claimed" in result:
                 messages.append(...)
                 return "work"
@@ -126,7 +126,7 @@ while True:
             break  # WORK phase ends
 
     # IDLE phase
-    idle_result = idle_poll(name, messages, name, role)
+    idle_result = idle_poll(name, messages, role)
     if idle_result == "shutdown":
         break
     if idle_result == "timeout":
@@ -195,15 +195,15 @@ Two teammates claim and work in parallel. Lead only creates tasks and spawns tea
 | Component | Before (s16) | After (s17) |
 |-----------|-------------|-------------|
 | Task assignment | Lead manually assigns | Teammates auto-claim (can_start checks deps) |
-| Teammate state | WORK or exit | WORK → IDLE (60s poll) → SHUTDOWN |
+| Teammate state | WORK → IDLE (1s inbox poll) → WORK / SHUTDOWN | WORK → IDLE (5s inbox + task board poll, 60s timeout) → WORK / SHUTDOWN |
 | claim_task | No owner check | Rejects tasks that already have an owner |
-| IDLE phase shutdown | Doesn't handle shutdown_request | Dispatches shutdown immediately and exits |
-| Lead inbox | Prints only, not in context | consume_lead_inbox injects into history |
-| New functions | — | idle_poll, scan_unclaimed_tasks, consume_lead_inbox |
+| IDLE phase shutdown | Exits after receiving shutdown_request | Dispatches shutdown immediately and exits |
+| Lead inbox | consume_lead_inbox routes protocol responses and injects into context | Reuses consume_lead_inbox mechanism |
+| New functions | consume_lead_inbox already exists | idle_poll, scan_unclaimed_tasks (reuses consume_lead_inbox) |
 | Identity persistence | System prompt only | Auto re-inject after compression |
-| Lead tools | 14 (s16) | 14 (unchanged) |
+| Lead tools | 14 | 14 (unchanged) |
 | Teammate tools | 5 | 8 (+ list_tasks, claim_task, complete_task) |
-| Teammate exit | Exit after task done | Exit only after 60s idle timeout |
+| Teammate exit | WORK ends → enters IDLE, waits for shutdown_request (no timeout) | Exits after 60s idle timeout or receiving shutdown_request |
 
 ---
 
@@ -268,4 +268,4 @@ Teaching version's `idle_poll()` merges CC's four mechanisms into one polling fu
 
 </details>
 
-<!-- translation-sync: zh@v1, en@v1, ja@v1 -->
+<!-- translation-sync: zh@v2, en@v2, ja@v2 -->
